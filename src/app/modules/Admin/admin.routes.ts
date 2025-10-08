@@ -1,5 +1,4 @@
-import express, { Request, Response } from 'express';
-import { PrismaClient } from '../../../../generated/prisma';
+import express from 'express';
 import { AdminController } from './admin.controller';
 
 const router = express.Router();
