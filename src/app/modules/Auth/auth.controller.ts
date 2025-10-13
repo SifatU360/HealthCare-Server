@@ -42,7 +42,7 @@ const refreshToken = async (req: Request, res: Response) => {
         res.status(200).json({
             success: true,
             message: "Refresh Token get successfully",
-            data: null
+            data: result
         })
         
     } catch (err:any) {
