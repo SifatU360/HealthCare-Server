@@ -41,7 +41,70 @@ const getByIdFromDB = async (req: Request, res: Response) => {
     });
   }
 };
+
+const updateIntoDB = async(req: Request, res: Response) => {
+  const { id } = req.params;
+  
+  
+  try {
+      const result = await AdminService.updateIntoDB(id, req.body);
+      res.status(200).json({
+          success: true,
+          Message: "Admin data updated successfully ..!",
+          data: result,
+      });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err?.name || "Something went wrong ..!!",
+      error: err,
+    });
+  }
+}
+
+const deleteFromDB = async(req: Request, res: Response) => {
+  const { id } = req.params;
+  
+  try {
+      const result = await AdminService.deleteFromDB(id);
+      res.status(200).json({
+          success: true,
+          Message: "Admin data deleted successfully ..!",
+          data: result,
+      });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err?.name || "Something went wrong ..!!",
+      error: err,
+    });
+  }
+}
+
+const softDeleteFromDB = async(req: Request, res: Response) => {
+  const { id } = req.params;
+  
+  try {
+      const result = await AdminService.softDeleteFromDB(id);
+      res.status(200).json({
+          success: true,
+          Message: "Admin data soft deleted successfully ..!",
+          data: result,
+      });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err?.name || "Something went wrong ..!!",
+      error: err,
+    });
+  }
+}
 export const AdminController = {
   getAllFromDB,
   getByIdFromDB,
+  updateIntoDB,
+  deleteFromDB,
+  softDeleteFromDB
 };
