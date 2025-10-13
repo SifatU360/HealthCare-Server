@@ -3,10 +3,11 @@ import cors from 'cors';
 import { userRoutes } from './app/modules/User/user.routes';
 import { AdminRoutes } from './app/modules/Admin/admin.routes';
 import { AuthRoutes } from './app/modules/Auth/auth.routes';
-
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 app.use(cors());
+app.use(cookieParser())
 
 //parser
 
