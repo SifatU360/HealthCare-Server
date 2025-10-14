@@ -41,7 +41,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
     config.jwt.refresh_token_secret as Secret,
     "30d"
   );
-  console.log(accessToken);
+  // console.log(accessToken);
 
   return {
     accessToken,
@@ -53,7 +53,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
 const refreshToken = async (token: string) => {
   let decodedData;
   try {
-    decodedData = jwtHelpers.verifyToken(token, "abcdefghlloer3425");
+    decodedData = jwtHelpers.verifyToken(token, config.jwt.refresh_token_secret as Secret);
   } catch (error) {
     throw new Error("You are not authorized user");
   }
@@ -123,11 +123,13 @@ const forgotPassword = async (payload: { email: string }) => {
       role: userData.role,
     },
     config.jwt.reset_pass_secret as Secret,
-    config.jwt.reset_pass_expires_in as string
+    "5m"
   );
+  console.log("Reset Pass Token", resetPassToken);
 
   const resetPassLink = `${config.reset_pass_link}?userId=${userData.id}&token=${resetPassToken}`;
 
+  console.log("Reset Pass Link", resetPassLink);
   await emailSender(
     userData.email,
     `
