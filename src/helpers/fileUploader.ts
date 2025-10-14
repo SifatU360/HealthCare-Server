@@ -25,7 +25,21 @@ const upload = multer({ storage: storage });
 
 const uploadToCloudinary = async(file: any) => {
 
-    
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload(
+        file.path,
+        {
+          public_id: file.originalname
+        },
+        (error, result) => {
+          if(error){
+            reject(error)
+          } else {
+            resolve(result)
+          }
+        }
+      )
+    })
   
     // Upload an image
      const uploadResult = await cloudinary.uploader
