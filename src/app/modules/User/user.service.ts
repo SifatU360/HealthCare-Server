@@ -89,7 +89,7 @@ const createPatient = async (req: Request): Promise<Patient> => {
       data: userData,
     });
 
-    const createdPatientData = await transactionClient.admin.create({
+    const createdPatientData = await transactionClient.patient.create({
       data:  req.body.patient,
     });
 

@@ -50,7 +50,7 @@ const createDoctor = z.object({
     designation: z.string({
       error: "Designation is required!",
     })
-  }),
+  })
 });
 
 
@@ -68,10 +68,8 @@ const createPatient = z.object({
     contactNumber: z.string({
       error: "Contact Number is required!",
     }),
-    address: z.string({
-      error: "Address is required"
-    })
- }),
+    address: z.string().optional()
+ })
 });
 
 
