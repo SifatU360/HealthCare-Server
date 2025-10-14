@@ -1,13 +1,14 @@
 import { fileURLToPathBuffer } from "node:url";
-import { Admin, PrismaClient, UserRole } from "../../../../generated/prisma";
+import { Admin, Doctor, Patient, PrismaClient, UserRole } from "../../../../generated/prisma";
 import bcrypt from "bcrypt";
 import { fileUploader } from "../../../helpers/fileUploader";
 import { Request } from "express";
+import { IFile } from "../../interfaces/file";
 const prisma = new PrismaClient();
 
 const createAdmin = async (req: Request): Promise<Admin> => {
 
-  const file = req.file;
+  const file = req.file as IFile;
 
   if(file){
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file) as { secure_url: string };
@@ -38,9 +39,9 @@ const createAdmin = async (req: Request): Promise<Admin> => {
   // }
   return result;
 };
-const createDoctor = async (req: Request): Promise<Admin> => {
+const createDoctor = async (req: Request): Promise<Doctor> => {
 
-  const file = req.file;
+  const file = req.file as IFile;
 
   if(file){
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
@@ -67,9 +68,9 @@ const createDoctor = async (req: Request): Promise<Admin> => {
   });
   return result;
 };
-const createPatient = async (req: Request): Promise<Admin> => {
+const createPatient = async (req: Request): Promise<Patient> => {
 
-  const file = req.file;
+  const file = req.file as IFile;
 
   if(file){
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
