@@ -76,7 +76,21 @@ const refreshToken = async (token: string) => {
   };
 };
 
+const changePassword = () => {
+  console.log("change password");
+};
+
+const forgotPassword = () => {
+  console.log("forgot password");
+};
+
+const resetPassword = () => {
+  console.log("reset password");
+};
 export const AuthService = {
   loginUser,
   refreshToken,
+  changePassword,
+  forgotPassword,
+  resetPassword
 };
