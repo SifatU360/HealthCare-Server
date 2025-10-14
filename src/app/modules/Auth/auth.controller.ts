@@ -39,30 +39,32 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const changePassword = catchAsync(async (req: Request, res: Response) => {
-  // const { id } = req.params;
-  const result = await AuthService.changePassword();
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Password changed successfully",
-    data: result,
-  });
-});
+const changePassword = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+    const result = await AuthService.changePassword(user, req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Password changed successfully",
+      data: result,
+    });
+  }
+);
 
 const forgotPassword = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthService.forgotPassword();
+  const result = await AuthService.forgotPassword(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-
     message: "Password reset email sent successfully",
     data: result,
   });
 });
 
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthService.resetPassword();
+  const token = req.headers.authorization || "";
+  const result = await AuthService.resetPassword(token, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
