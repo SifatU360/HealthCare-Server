@@ -3,8 +3,10 @@ import config from "../../../config";
 import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import { JwtPayload, Secret } from "jsonwebtoken";
 import emailSender from "./emailSender";
+import ApiError from "../../errors/ApiError";
+import httpStatus from "http-status";
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUnique({
@@ -82,7 +84,7 @@ const changePassword = async (user: any, payload: any) => {
     where: {
       email: user.email,
       status: UserStatus.ACTIVE,
-    }
+    },
   });
 
   const isCorrectPassword = await bcrypt.compare(
@@ -112,17 +114,17 @@ const forgotPassword = async (payload: { email: string }) => {
     where: {
       email: payload.email,
       status: UserStatus.ACTIVE,
-    }
+    },
   });
 
   const resetPassToken = jwtHelpers.generateToken(
     {
       email: userData.email,
-      role: userData.role
+      role: userData.role,
     },
     config.jwt.reset_pass_secret as Secret,
     config.jwt.reset_pass_expires_in as string
-  )
+  );
 
   const resetPassLink = `${config.reset_pass_link}?userId=${userData.id}&token=${resetPassToken}`;
 
@@ -161,14 +163,39 @@ const forgotPassword = async (payload: { email: string }) => {
       >This link will expire in 5 minutes.</p>
     </div>
     `
-  )
+  );
 };
 
-const resetPassword = (
+const resetPassword = async (
   token: string,
   payload: { id: string; password: string }
 ) => {
-  console.log("reset password");
+  const userData = await prisma.user.findFirstOrThrow({
+    where: {
+      id: payload.id,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  const isValidToken = jwtHelpers.verifyToken(
+    token,
+    config.jwt.reset_pass_secret as Secret
+  ) as JwtPayload;
+  if (!isValidToken) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "Invalid/Expired reset password link"
+    );
+  }
+  const newHashPassword: string = await bcrypt.hash(payload.password, 10);
+  await prisma.user.update({
+    where: {
+      id: payload.id,
+    },
+    data: {
+      password: newHashPassword,
+    },
+  });
 };
 export const AuthService = {
   loginUser,
