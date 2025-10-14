@@ -68,7 +68,9 @@ const createPatient = z.object({
     contactNumber: z.string({
       error: "Contact Number is required!",
     }),
-    address: z.string().optional()
+    address: z.string({
+      error: "Address is required"
+    })
  })
 });
 
