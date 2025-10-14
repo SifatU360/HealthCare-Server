@@ -49,9 +49,21 @@ const getAllFromDB = catchAsync(
   }
 );
 
+const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
+  const {id} = req.params;
+  const result = await userService.updateUserStatus(id, req.body);
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message: "User status updated successfully",
+    data: result,
+  });
+});
+
 export const userController = {
   createAdmin,
   createDoctor,
   createPatient,
-  getAllFromDB
+  getAllFromDB,
+  updateUserStatus
 };
