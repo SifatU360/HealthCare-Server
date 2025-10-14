@@ -4,6 +4,7 @@ import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import emailSender from "./emailSender";
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUnique({
@@ -76,15 +77,97 @@ const refreshToken = async (token: string) => {
   };
 };
 
-const changePassword = () => {
-  console.log("change password");
+const changePassword = async (user: any, payload: any) => {
+  const userData = await prisma.user.findFirstOrThrow({
+    where: {
+      email: user.email,
+      status: UserStatus.ACTIVE,
+    }
+  });
+
+  const isCorrectPassword = await bcrypt.compare(
+    payload.oldPassword,
+    userData.password
+  );
+
+  if (!isCorrectPassword) {
+    throw new Error("Old Password is incorrect");
+  }
+  const newHashPassword: string = await bcrypt.hash(payload.newPassword, 10);
+  await prisma.user.update({
+    where: {
+      email: user.email,
+    },
+    data: {
+      password: newHashPassword,
+      needPasswordChange: false,
+    },
+  });
+
+  return { message: "Password changed successfully" };
 };
 
-const forgotPassword = () => {
-  console.log("forgot password");
+const forgotPassword = async (payload: { email: string }) => {
+  const userData = await prisma.user.findFirstOrThrow({
+    where: {
+      email: payload.email,
+      status: UserStatus.ACTIVE,
+    }
+  });
+
+  const resetPassToken = jwtHelpers.generateToken(
+    {
+      email: userData.email,
+      role: userData.role
+    },
+    config.jwt.reset_pass_secret as Secret,
+    config.jwt.reset_pass_expires_in as string
+  )
+
+  const resetPassLink = `${config.reset_pass_link}?userId=${userData.id}&token=${resetPassToken}`;
+
+  await emailSender(
+    userData.email,
+    `
+    <div>
+      <h4>Dear User,</h4>
+      <p
+        style="font-size: 14px; color: #333;"
+      >You have requested to reset your password.</p>
+      <p
+        style="font-size: 14px; color: #333;"
+      >Click the following link to reset your password:</p>
+      <a href="${resetPassLink}">
+        <button
+          style="
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+          "
+        >
+          Reset Password
+        </button>
+      </a>
+      <p
+        style="font-size: 12px; color: gray; margin-top: 10px;"
+      >This link will expire in 5 minutes.</p>
+    </div>
+    `
+  )
 };
 
-const resetPassword = () => {
+const resetPassword = (
+  token: string,
+  payload: { id: string; password: string }
+) => {
   console.log("reset password");
 };
 export const AuthService = {
@@ -92,5 +175,5 @@ export const AuthService = {
   refreshToken,
   changePassword,
   forgotPassword,
-  resetPassword
+  resetPassword,
 };
