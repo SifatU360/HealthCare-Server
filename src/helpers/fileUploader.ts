@@ -1,6 +1,7 @@
 import multer from "multer"
 import path from "path"
 import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
 
 //Configuration
 cloudinary.config({ 
@@ -32,6 +33,7 @@ const uploadToCloudinary = async(file: any) => {
           public_id: file.originalname
         },
         (error, result) => {
+          fs.unlinkSync(file.path)
           if(error){
             reject(error)
           } else {
