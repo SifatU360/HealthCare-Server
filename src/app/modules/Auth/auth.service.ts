@@ -53,7 +53,10 @@ const loginUser = async (payload: { email: string; password: string }) => {
 const refreshToken = async (token: string) => {
   let decodedData;
   try {
-    decodedData = jwtHelpers.verifyToken(token, config.jwt.refresh_token_secret as Secret);
+    decodedData = jwtHelpers.verifyToken(
+      token,
+      config.jwt.refresh_token_secret as Secret
+    );
   } catch (error) {
     throw new Error("You are not authorized user");
   }
@@ -133,37 +136,95 @@ const forgotPassword = async (payload: { email: string }) => {
   await emailSender(
     userData.email,
     `
-    <div>
-      <h4>Dear User,</h4>
-      <p
-        style="font-size: 14px; color: #333;"
-      >You have requested to reset your password.</p>
-      <p
-        style="font-size: 14px; color: #333;"
-      >Click the following link to reset your password:</p>
-      <a href="${resetPassLink}">
-        <button
+    <div
+      style="
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea, #764ba2, #e06479, #035f9c);
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      "
+    >
+      <div
+        style="
+          background-color: #ffffff;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          border-radius: 8px;
+          padding: 40px;
+          max-width: 500px;
+          text-align: left;
+          color: #2d3748;
+        "
+      >
+        <h2
           style="
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 8px;
+            color: #1a202c;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 24px;
           "
         >
-          Reset Password
-        </button>
-      </a>
-      <p
-        style="font-size: 12px; color: gray; margin-top: 10px;"
-      >This link will expire in 5 minutes.</p>
+          Password Reset Request
+        </h2>
+
+        <p
+          style="
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 16px;
+            line-height: 1.6;
+          "
+        >
+          We received a request to reset your password. To proceed with the
+          password reset, please click the button below.
+        </p>
+
+        <a
+          href="${resetPassLink}"
+          style="text-decoration: none; display: inline-block; margin: 25px 0"
+        >
+          <button
+            style="
+              background-color: #2563eb;
+              border: none;
+              color: white;
+              padding: 12px 32px;
+              font-size: 16px;
+              font-weight: 500;
+              border-radius: 6px;
+              cursor: pointer;
+              transition: background-color 0.2s ease;
+            "
+            onmouseover="this.style.backgroundColor='#1d4ed8';"
+            onmouseout="this.style.backgroundColor='#2563eb';"
+          >
+            Reset Password
+          </button>
+        </a>
+
+        <p style="font-size: 14px; color: #64748b; margin-top: 20px">
+          This link will expire in <strong>5 minutes</strong>.
+        </p>
+
+        <hr
+          style="margin: 25px 0; border: none; border-top: 1px solid #e2e8f0"
+        />
+
+        <p style="font-size: 14px; color: #64748b; line-height: 1.6">
+          If you didn't request this password reset, please disregard this
+          email.
+          <br />Your account security is important to us.
+        </p>
+
+        <div style="margin-top: 30px; font-size: 14px; color: #64748b">
+          Best regards,<br />
+          Health Care Service
+        </div>
+      </div>
     </div>
+
     `
   );
 };
