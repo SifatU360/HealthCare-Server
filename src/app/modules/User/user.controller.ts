@@ -5,7 +5,7 @@ import sendResponse from "../../../shared/sendResponse";
 import httpsStatus from "http-status";
 
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
-  const result = await userService.createAdmin(req.body);
+  const result = await userService.createAdmin(req);
   sendResponse(res, {
     statusCode: httpsStatus.OK,
     success: true,

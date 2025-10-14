@@ -30,7 +30,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
       role: userData?.role,
     },
     config.jwt.jwt_secret as Secret,
-    "15m"
+    config.jwt.expires_in as string
   );
 
   const refreshToken = jwtHelpers.generateToken(
