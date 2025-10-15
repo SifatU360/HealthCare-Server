@@ -19,10 +19,34 @@ const updateIntoDB = async (id: string, payload: any) => {
         medicalReport: true,
       },
     });
-    return result
+    // create or update patient health data
+    if (patientHealthData) {
+      await transactionClient.patientHealthData.upsert({
+        where: {
+          patientId: patientInfo.id,
+        },
+        update: patientHealthData,
+        create: { ...patientHealthData, patientId: patientInfo.id },
+      });
+    }
+
+    if (medicalReport) {
+      await transactionClient.medicalReport.create({
+        data: { ...medicalReport, patientId: patientInfo.id },
+      });
+    }
   });
 
-  return result;
+  const responseData = await prisma.patient.findUnique({
+    where: {
+      id: patientInfo.id,
+    },
+    include: {
+      patientHealthData: true,
+      medicalReport: true,
+    },
+  });
+  return responseData;
 };
 
 export const PatientService = {
