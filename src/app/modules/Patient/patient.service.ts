@@ -25,6 +25,7 @@ const updateIntoDB = async (
   const patientInfo = await prisma.patient.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false
     },
   });
   const result = await prisma.$transaction(async (transactionClient) => {
@@ -69,16 +70,26 @@ const updateIntoDB = async (
 };
 
 const deleteFromDB = async (id: string): Promise<Patient | null> => {
+  /**
+   * According To Patient model in prisma schema
+   * First Delete medicalReport and patientHealthData
+   * then Patient
+   * then User -> (relation written)
+   * this order should be maintain for delete
+   * */
+
   const result = await prisma.$transaction(async (tx) => {
     // delete medical report
-    await tx.medicalReport.deleteMany({ // One to Many -> DeleteMany
+    await tx.medicalReport.deleteMany({
+      // One to Many -> DeleteMany
       where: {
         patientId: id,
       },
     });
 
     // delete patient health data
-    await tx.patientHealthData.deleteMany({ // deleteMany() will: Delete the record if it exists. Do nothing (and not throw an error) if it doesn’t.
+    await tx.patientHealthData.deleteMany({
+      // deleteMany() will: Delete the record if it exists. Do nothing (and not throw an error) if it doesn’t.
       where: {
         patientId: id,
       },
