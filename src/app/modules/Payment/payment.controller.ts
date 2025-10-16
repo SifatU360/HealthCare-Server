@@ -9,7 +9,7 @@ const initPayment = catchAsync(async (req: Request, res: Response) => {
   const result = await PaymentServices.initPayment();
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Doctor data updated successfully ..!",
+    message: "Payment Initiate successfully ..!",
     success: true,
     data: result,
   });
