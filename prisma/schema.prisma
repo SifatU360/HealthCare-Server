@@ -168,7 +168,7 @@ model DoctorSchedules {
 
   isBooked Boolean @default(false)
 
-  appointmentId String?     @unique
+  appointmentId String?      @unique
   appoitnment   Appointment? @relation(fields: [appointmentId], references: [id])
 
   @@id([doctorId, scheduleId])
@@ -198,16 +198,17 @@ model Appointment {
 }
 
 model Payment {
-  id             String      @id @default(uuid())
-  appointtmentId String      @unique
-  appoinment     Appointment @relation(fields: [appointtmentId], references: [id])
-
-  amount             String
+  id                 String        @id @default(uuid())
+  appointmentId      String        @unique
+  appoinment         Appointment   @relation(fields: [appointmentId], references: [id])
+  amount             Float
   transactionId      String
-  status             PaymentStatus
-  paymentGatewayData Json
+  status             PaymentStatus @default(UNPAID)
+  paymentGatewayData Json?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
+
+  @@map("payments")
 }
 
 enum UserRole {
