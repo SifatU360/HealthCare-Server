@@ -4,7 +4,7 @@ import { PaymentController } from './payment.controller';
 const router = express.Router();
 
 router.post(
-    '/init-payment',
+    '/init-payment/:appointmentId',
     PaymentController.initPayment
 )
 
