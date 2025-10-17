@@ -1,38 +1,38 @@
 import { PrismaClient } from "../../generated/prisma";
 
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
-const prisma = new PrismaClient({
-    log: [
-        {
-            emit: 'event',
-            level: 'query',
-        },
-        {
-            emit: 'event',
-            level: 'error',
-        },
-        {
-            emit: 'event',
-            level: 'info',
-        },
-        {
-            emit: 'event',
-            level: 'warn',
-        },
-    ],
-})
+// const prisma = new PrismaClient({
+//     log: [
+//         {
+//             emit: 'event',
+//             level: 'query',
+//         },
+//         {
+//             emit: 'event',
+//             level: 'error',
+//         },
+//         {
+//             emit: 'event',
+//             level: 'info',
+//         },
+//         {
+//             emit: 'event',
+//             level: 'warn',
+//         },
+//     ],
+// })
 
-prisma.$on('query', (e) => {
-    console.log("-------------------------------------------")
-    console.log('Query: ' + e.query);
-    console.log("-------------------------------------------")
-    console.log('Params: ' + e.params)
-    console.log("-------------------------------------------")
-    console.log('Duration: ' + e.duration + 'ms')
-    console.log("-------------------------------------------")
-})
+// prisma.$on('query', (e) => {
+//     console.log("-------------------------------------------")
+//     console.log('Query: ' + e.query);
+//     console.log("-------------------------------------------")
+//     console.log('Params: ' + e.params)
+//     console.log("-------------------------------------------")
+//     console.log('Duration: ' + e.duration + 'ms')
+//     console.log("-------------------------------------------")
+// })
 
 // prisma.$on('warn', (e) => {
 //     console.log(e)
@@ -46,7 +46,7 @@ prisma.$on('query', (e) => {
 //     console.log(e)
 // })
 
-
+// I can store all log in a file using 'fs' instead of alltime looking at terminal 
 
 
 export default prisma;
